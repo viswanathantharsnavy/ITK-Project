@@ -1,0 +1,177 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Create Blog - Blog Hub</title>
+    <link rel="stylesheet" href="style.css">
+</head>
+<body>
+    <!-- Navigation Bar -->
+    <nav class="navbar">
+        <div class="container">
+            <div class="nav-brand">
+                <h1>Blog Hub</h1>
+            </div>
+            <div class="nav-menu" id="navMenu">
+                <a href="index.html" class="nav-link">Home</a>
+                <a href="create-blog.html" class="nav-link active">Create Blog</a>
+                <a href="dashboard.html" class="nav-link">My Blogs</a>
+                <span class="nav-link" id="userName" style="display: none;"></span>
+                <button class="btn btn-secondary" id="logoutBtn" style="display: none;">Logout</button>
+            </div>
+            <button class="nav-toggle" id="navToggle">
+                <span></span>
+                <span></span>
+                <span></span>
+            </button>
+        </div>
+    </nav>
+
+    <!-- Main Content -->
+    <main class="container">
+        <div class="blog-form-container">
+            <div class="blog-form-card">
+                <h2>Create New Blog Post</h2>
+                <p class="subtitle">Share your thoughts with the world</p>
+
+                <form id="createBlogForm" class="blog-form">
+                    <div class="form-group">
+                        <label for="blogTitle">Title <span class="required">*</span></label>
+                        <input type="text" id="blogTitle" class="form-control" required placeholder="Enter blog title">
+                        <span class="error-message" id="blogTitleError"></span>
+                    </div>
+
+                    <div class="form-group">
+                        <label for="blogContent">Content <span class="required">*</span></label>
+                        <textarea id="blogContent" class="form-control" rows="12" required placeholder="Write your blog content here..."></textarea>
+                        <div class="char-counter">
+                            <span id="contentCharCount">0</span> / 10000 characters
+                        </div>
+                        <span class="error-message" id="blogContentError"></span>
+                    </div>
+
+                    <div class="form-group">
+                        <label for="blogImageUrl">Image URL (Optional)</label>
+                        <input type="url" id="blogImageUrl" class="form-control" placeholder="https://example.com/image.jpg">
+                        <span class="form-hint">Enter a valid image URL</span>
+                        <span class="error-message" id="blogImageUrlError"></span>
+                    </div>
+
+                    <div class="form-actions">
+                        <button type="button" class="btn btn-secondary" onclick="window.location.href='index.html'">Cancel</button>
+                        <button type="submit" class="btn btn-primary">Publish Blog</button>
+                    </div>
+                </form>
+            </div>
+        </div>
+    </main>
+
+    <!-- Footer -->
+    <footer class="footer">
+        <div class="container">
+            <p>&copy; 2024 Blog Hub. All rights reserved.</p>
+        </div>
+    </footer>
+
+    <script src="auth.js"></script>
+    <script src="blog.js"></script>
+    <script src="app.js"></script>
+    <script>
+        document.addEventListener('DOMContentLoaded', () => {
+            // Check authentication
+            if (!auth.isLoggedIn()) {
+                alert('Please login to create a blog');
+                window.location.href = 'login.html';
+                return;
+            }
+
+            app.initNavigation();
+
+            // Character counter for content
+            const contentTextarea = document.getElementById('blogContent');
+            const charCount = document.getElementById('contentCharCount');
+            
+            contentTextarea.addEventListener('input', () => {
+                const count = contentTextarea.value.length;
+                charCount.textContent = count;
+                
+                if (count > 10000) {
+                    charCount.style.color = '#e74c3c';
+                } else {
+                    charCount.style.color = '#7f8c8d';
+                }
+            });
+
+            // Form submission
+            const createBlogForm = document.getElementById('createBlogForm');
+            createBlogForm.addEventListener('submit', (e) => {
+                e.preventDefault();
+                
+                const title = document.getElementById('blogTitle').value.trim();
+                const content = document.getElementById('blogContent').value.trim();
+                const imageUrl = document.getElementById('blogImageUrl').value.trim();
+                
+                // Get error elements
+                const titleError = document.getElementById('blogTitleError');
+                const contentError = document.getElementById('blogContentError');
+                const imageUrlError = document.getElementById('blogImageUrlError');
+                
+                // Clear previous errors
+                titleError.textContent = '';
+                contentError.textContent = '';
+                imageUrlError.textContent = '';
+                
+                // Validation
+                let isValid = true;
+                
+                if (!title) {
+                    titleError.textContent = 'Title is required';
+                    isValid = false;
+                } else if (title.length < 3) {
+                    titleError.textContent = 'Title must be at least 3 characters';
+                    isValid = false;
+                } else if (title.length > 200) {
+                    titleError.textContent = 'Title must be less than 200 characters';
+                    isValid = false;
+                }
+                
+                if (!content) {
+                    contentError.textContent = 'Content is required';
+                    isValid = false;
+                } else if (content.length < 50) {
+                    contentError.textContent = 'Content must be at least 50 characters';
+                    isValid = false;
+                } else if (content.length > 10000) {
+                    contentError.textContent = 'Content must be less than 10000 characters';
+                    isValid = false;
+                }
+                
+                if (imageUrl && !isValidUrl(imageUrl)) {
+                    imageUrlError.textContent = 'Please enter a valid URL';
+                    isValid = false;
+                }
+                
+                if (isValid) {
+                    const result = blog.createBlog(title, content, imageUrl);
+                    if (result.success) {
+                        alert('Blog created successfully!');
+                        window.location.href = 'index.html';
+                    } else {
+                        alert('Error: ' + result.message);
+                    }
+                }
+            });
+
+            function isValidUrl(string) {
+                try {
+                    new URL(string);
+                    return true;
+                } catch (_) {
+                    return false;
+                }
+            }
+        });
+    </script>
+</body>
+</html>

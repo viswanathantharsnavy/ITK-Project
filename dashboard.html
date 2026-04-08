@@ -1,0 +1,75 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>My Blogs - Blog Hub</title>
+    <link rel="stylesheet" href="style.css">
+</head>
+<body>
+    <!-- Navigation Bar -->
+    <nav class="navbar">
+        <div class="container">
+            <div class="nav-brand">
+                <h1>Blog Hub</h1>
+            </div>
+            <div class="nav-menu" id="navMenu">
+                <a href="index.html" class="nav-link">Home</a>
+                <a href="create-blog.html" class="nav-link">Create Blog</a>
+                <a href="dashboard.html" class="nav-link active">My Blogs</a>
+                <span class="nav-link" id="userName" style="display: none;"></span>
+                <button class="btn btn-secondary" id="logoutBtn" style="display: none;">Logout</button>
+            </div>
+            <button class="nav-toggle" id="navToggle">
+                <span></span>
+                <span></span>
+                <span></span>
+            </button>
+        </div>
+    </nav>
+
+    <!-- Main Content -->
+    <main class="container">
+        <section class="feed-header">
+            <h2>My Blogs</h2>
+            <p class="subtitle">Manage your blog posts</p>
+        </section>
+
+        <!-- User's Blogs Container -->
+        <div id="myBlogsContainer" class="blogs-container">
+            <!-- User's blogs will be dynamically loaded here -->
+            <div class="loading">Loading your blogs...</div>
+        </div>
+
+        <!-- No Blogs Message -->
+        <div id="noBlogsMessage" class="no-results" style="display: none;">
+            <p>You haven't created any blogs yet.</p>
+            <a href="create-blog.html" class="btn btn-primary">Create Your First Blog</a>
+        </div>
+    </main>
+
+    <!-- Footer -->
+    <footer class="footer">
+        <div class="container">
+            <p>&copy; 2024 Blog Hub. All rights reserved.</p>
+        </div>
+    </footer>
+
+    <script src="auth.js"></script>
+    <script src="blog.js"></script>
+    <script src="app.js"></script>
+    <script>
+        document.addEventListener('DOMContentLoaded', () => {
+            // Check authentication
+            if (!auth.isLoggedIn()) {
+                alert('Please login to view your blogs');
+                window.location.href = 'login.html';
+                return;
+            }
+
+            app.initNavigation();
+            blog.displayUserBlogs();
+        });
+    </script>
+</body>
+</html>

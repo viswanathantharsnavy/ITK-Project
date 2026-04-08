@@ -1,0 +1,112 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Login - Blog Hub</title>
+    <link rel="stylesheet" href="style.css">
+</head>
+<body>
+    <!-- Navigation Bar -->
+    <nav class="navbar">
+        <div class="container">
+            <div class="nav-brand">
+                <h1>Blog Hub</h1>
+            </div>
+            <div class="nav-menu">
+                <a href="index.html" class="nav-link">Home</a>
+                <a href="login.html" class="nav-link active">Login</a>
+                <a href="register.html" class="nav-link">Register</a>
+            </div>
+        </div>
+    </nav>
+
+    <!-- Main Content -->
+    <main class="container">
+        <div class="auth-container">
+            <div class="auth-card">
+                <h2>Welcome Back</h2>
+                <p class="auth-subtitle">Login to your account</p>
+
+                <form id="loginForm" class="auth-form">
+                    <div class="form-group">
+                        <label for="loginEmail">Email</label>
+                        <input type="email" id="loginEmail" class="form-control" required placeholder="Enter your email">
+                        <span class="error-message" id="loginEmailError"></span>
+                    </div>
+
+                    <div class="form-group">
+                        <label for="loginPassword">Password</label>
+                        <input type="password" id="loginPassword" class="form-control" required placeholder="Enter your password">
+                        <span class="error-message" id="loginPasswordError"></span>
+                    </div>
+
+                    <div class="form-group">
+                        <button type="submit" class="btn btn-primary btn-block">Login</button>
+                    </div>
+
+                    <div class="auth-footer">
+                        <p>Don't have an account? <a href="register.html">Register here</a></p>
+                    </div>
+                </form>
+            </div>
+        </div>
+    </main>
+
+    <!-- Footer -->
+    <footer class="footer">
+        <div class="container">
+            <p>&copy; 2024 Blog Hub. All rights reserved.</p>
+        </div>
+    </footer>
+
+    <script src="auth.js"></script>
+    <script src="app.js"></script>
+    <script>
+        document.addEventListener('DOMContentLoaded', () => {
+            const loginForm = document.getElementById('loginForm');
+            
+            loginForm.addEventListener('submit', (e) => {
+                e.preventDefault();
+                
+                const email = document.getElementById('loginEmail').value.trim();
+                const password = document.getElementById('loginPassword').value;
+                const emailError = document.getElementById('loginEmailError');
+                const passwordError = document.getElementById('loginPasswordError');
+                
+                // Clear previous errors
+                emailError.textContent = '';
+                passwordError.textContent = '';
+                
+                // Validation
+                let isValid = true;
+                
+                if (!email) {
+                    emailError.textContent = 'Email is required';
+                    isValid = false;
+                } else if (!/\S+@\S+\.\S+/.test(email)) {
+                    emailError.textContent = 'Please enter a valid email';
+                    isValid = false;
+                }
+                
+                if (!password) {
+                    passwordError.textContent = 'Password is required';
+                    isValid = false;
+                } else if (password.length < 6) {
+                    passwordError.textContent = 'Password must be at least 6 characters';
+                    isValid = false;
+                }
+                
+                if (isValid) {
+                    const result = auth.login(email, password);
+                    if (result.success) {
+                        window.location.href = 'index.html';
+                    } else {
+                        emailError.textContent = result.message;
+                    }
+                }
+            });
+        });
+    </script>
+</body>
+</html>
